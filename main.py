@@ -1,6 +1,7 @@
 import discord
 import os
 import requests 
+from keep_alive import keep_alive
 
 
 client = discord.Client()
@@ -22,4 +23,6 @@ async def on_message(message):
   if message.content.startswith('pt cowin'):
     await message.channel.send('cowin')
 
+
+keep_alive()
 client.run(os.getenv('TOKEN'))
