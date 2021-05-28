@@ -4,7 +4,13 @@ from datetime import datetime, timedelta
 import time
 
 def get_slots_availability(age, pincode, dose):
-
+    try: 
+        age = int(age)
+        pincode = int(pincode)
+        dose = int(dose)
+    except Exception as e:
+        return "wrong-args"
+    
     actual = datetime.today()
     actual_date = actual.strftime("%d-%m-%Y")
 
