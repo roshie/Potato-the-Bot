@@ -27,7 +27,6 @@ def get_slots_availability(age, pincode, dose):
         for center in response["centers"]:
             # sessionCounter = 0
             for session in center["sessions"]:
-                print(session)
                 if (session["min_age_limit"] <= age and session["available_capacity_dose"+str(dose)] > 0 ) :
                     available_centers.append({})
                     available_centers[counter]["center_name"] = center["name"]
@@ -50,7 +49,8 @@ def get_slots_availability(age, pincode, dose):
     if not available_centers:
         return "no-slots"
     else:
+        print(available_centers)
         return available_centers
 
-result = get_slots_availability("50", "600062", "2")
-print(result)
+# result = get_slots_availability("50", "600062", "2")
+# print(result)

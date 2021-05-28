@@ -48,18 +48,18 @@ async def cowin(ctx, age:str, pincode:str, dose:str):
     msg = "\nThere are no slots :("
   else:
     title = "Slot Available Centres"
-    msg = "\n**There are "+ str(len(available_slots)) + " Centers available at pincode " + available_slots[0]["center_pincode"] + " For Dosage "+ dose +"**\n" 
+    msg = "\n**There are "+ str(len(available_slots)) + " Centers available at pincode " + str(available_slots[0]["center_pincode"]) + " For Dosage "+ str(dose) +"**\n" 
     for centre in available_slots:
       slot = '\n'
-      slot += '\n**Center Id**     ' + centre["center_id"]
+      slot += '\n**Center Id**     ' + str(centre["center_id"])
       slot += '\n**Center Name**   ' + centre["center_name"]
       slot += '\n**Address**       ' + centre["center_address"]
       slot += '\n**Fee**           ' + centre["fee"]
 
-      for session in available_slots["session"]:
+      for session in centre["session"]:
         slot += '\n ``` DATE      : ' + session["date"]  
         slot += '\n' + 'VACCINE   : ' + session["vaccine"]
-        slot += '\n' + 'AVAILABLE : ' + session["available"]+ '```'
+        slot += '\n' + 'AVAILABLE : ' + str(session["available"])+ '```'
       msg += slot
       
   embed = discord.Embed(title=title, description=msg, color=0xFFFFF)
@@ -70,7 +70,7 @@ async def ping(ctx):
     # Get the latency of the bot
     latency = bot.latency  # Included in the Discord.py library
     # Send it to the user
-    await ctx.send(ctx.message.author, latency)
+    await ctx.send(ctx.message.author, "> "+str(latency))
 
 
 keep_alive()
