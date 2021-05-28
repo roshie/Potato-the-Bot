@@ -28,21 +28,26 @@ def get_slots_availability(age, pincode, dose):
             # sessionCounter = 0
             for session in center["sessions"]:
                 if (session["min_age_limit"] <= age and session["available_capacity_dose"+str(dose)] > 0 ) :
-                    available_centers.append({})
-                    available_centers[counter]["center_name"] = center["name"]
-                    available_centers[counter]["center_address"] = center["address"]
-                    available_centers[counter]["center_pincode"] = center["pincode"]
-                    available_centers[counter]["center_id"] = center["center_id"]
-                    available_centers[counter]["fee"] = center["fee_type"]
-                    print(counter)
-                    available_centers[counter]["session"] = []
-                    available_centers[counter]["session"].append({})
-                    available_centers[counter]["session"][-1]["date"] = session["date"]
-                    available_centers[counter]["session"][-1]["vaccine"] = session["vaccine"]
-                    available_centers[counter]["session"][-1]["available"] = session["available_capacity_dose"+str(dose)]
-                    # sessionCounter = sessionCounter + 1  
-                        
-            # counter = counter + 1
+                    try:
+                      if len(available_centers) != 0 and available_centers[-1]["center_name"] == center["name"]:
+                          available_centers[counter]["session"].append({})
+                          available_centers[counter]["session"][-1]["date"] = session["date"]
+                          available_centers[counter]["session"][-1]["vaccine"] = session["vaccine"]
+                          available_centers[counter]["session"][-1]["available"] = session["available_capacity_dose"+str(dose)]
+                      else:
+                          available_centers.append({})
+                          available_centers[counter]["center_name"] = center["name"]
+                          available_centers[counter]["center_address"] = center["address"]
+                          available_centers[counter]["center_pincode"] = center["pincode"]
+                          available_centers[counter]["center_id"] = center["center_id"]
+                          available_centers[counter]["fee"] = center["fee_type"]
+                          available_centers[counter]["session"] = []
+                          available_centers[counter]["session"].append({})
+                          available_centers[counter]["session"][-1]["date"] = session["date"]
+                          available_centers[counter]["session"][-1]["vaccine"] = session["vaccine"]
+                          available_centers[counter]["session"][-1]["available"] = session["available_capacity_dose"+str(dose)]
+                    except Exception as e:
+                        return ["exception", e]
     else:
         return "no-response"
         

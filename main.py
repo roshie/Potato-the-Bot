@@ -38,17 +38,19 @@ async def about(ctx):
 @bot.command()
 async def cowin(ctx, age:str, pincode:str, dose:str):
   title = "Potato says: "
-  msg = ''
+  msg = "\n"+ctx.message.author.mention
   available_slots = get_slots_availability(age, pincode, dose)
   if available_slots == "wrong-args":
-    msg = "\nThe Arguments provided were wrong"
+    msg += "\nThe Arguments provided were wrong"
   elif available_slots == "no-response":
-    msg = "\nThere was a problem with Cowin. Please Try again later"
+    msg += "\nThere was a problem with Cowin. Please Try again later"
   elif available_slots == "no-slots":
-    msg = "\nThere are no slots :("
+    msg += "\nThere are no slots :("
+  elif available_slots[0] == "exception":
+    msg = available_slots[1]
   else:
     title = "Slot Available Centres"
-    msg = "\n**There are "+ str(len(available_slots)) + " Centers available at pincode " + str(available_slots[0]["center_pincode"]) + " For Dosage "+ str(dose) +"**\n" 
+    msg += "\n**There are "+ str(len(available_slots)) + " Centers available at pincode " + str(available_slots[0]["center_pincode"]) + " For Dosage "+ str(dose) +"**\n" 
     for centre in available_slots:
       slot = '\n'
       slot += '\n**Center Id**     ' + str(centre["center_id"])
@@ -57,7 +59,7 @@ async def cowin(ctx, age:str, pincode:str, dose:str):
       slot += '\n**Fee**           ' + centre["fee"]
 
       for session in centre["session"]:
-        slot += '\n ``` DATE      : ' + session["date"]  
+        slot += '\n```DATE      : ' + session["date"]  
         slot += '\n' + 'VACCINE   : ' + session["vaccine"]
         slot += '\n' + 'AVAILABLE : ' + str(session["available"])+ '```'
       msg += slot
