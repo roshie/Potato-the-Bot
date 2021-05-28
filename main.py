@@ -23,14 +23,6 @@ async def on_message(message):
 
 
 @bot.command()
-async def ping(ctx):
-    # Get the latency of the bot
-    latency = bot.latency  # Included in the Discord.py library
-    # Send it to the user
-    await ctx.send(latency)
-
-
-@bot.command()
 async def hello(ctx):
   await ctx.send("> Hello!")
 
@@ -44,7 +36,7 @@ async def about(ctx):
   await ctx.send(embed=embed)
 
 @bot.command()
-async def cowin(ctx, *, age:str, pincode:str, dose:str):
+async def cowin(ctx, age:str, pincode:str, dose:str):
   title = "Potato says: "
   msg = ''
   available_slots = get_slots_availability(age, pincode, dose)
