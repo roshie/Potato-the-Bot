@@ -14,7 +14,7 @@ def get_slots_availability(age, pincode, dose):
     actual = datetime.today()
     actual_date = actual.strftime("%d-%m-%Y")
 
-    counter = 0   
+    counter = -1
     available_centers = []
 
     URL = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode={}&date={}".format(pincode, actual_date)
@@ -25,8 +25,9 @@ def get_slots_availability(age, pincode, dose):
     if result.ok:
         response = result.json()
         for center in response["centers"]:
-            sessionCounter = 0
+            # sessionCounter = 0
             for session in center["sessions"]:
+                print(session)
                 if (session["min_age_limit"] <= age and session["available_capacity_dose"+str(dose)] > 0 ) :
                     available_centers.append({})
                     available_centers[counter]["center_name"] = center["name"]
@@ -34,15 +35,15 @@ def get_slots_availability(age, pincode, dose):
                     available_centers[counter]["center_pincode"] = center["pincode"]
                     available_centers[counter]["center_id"] = center["center_id"]
                     available_centers[counter]["fee"] = center["fee_type"]
-
+                    print(counter)
                     available_centers[counter]["session"] = []
                     available_centers[counter]["session"].append({})
-                    available_centers[counter]["session"][sessionCounter]["date"] = session["date"]
-                    available_centers[counter]["session"][sessionCounter]["vaccine"] = session["vaccine"]
-                    available_centers[counter]["session"][sessionCounter]["available"] = session["available_capacity_dose"+str(dose)]
-                    sessionCounter = sessionCounter + 1  
+                    available_centers[counter]["session"][-1]["date"] = session["date"]
+                    available_centers[counter]["session"][-1]["vaccine"] = session["vaccine"]
+                    available_centers[counter]["session"][-1]["available"] = session["available_capacity_dose"+str(dose)]
+                    # sessionCounter = sessionCounter + 1  
                         
-                    counter = counter + 1
+            # counter = counter + 1
     else:
         return "no-response"
         
@@ -51,3 +52,5 @@ def get_slots_availability(age, pincode, dose):
     else:
         return available_centers
 
+result = get_slots_availability("50", "600062", "2")
+print(result)
