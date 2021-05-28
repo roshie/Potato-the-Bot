@@ -8,6 +8,7 @@ client = discord.Client()
 @client.event
 async def on_ready():
   print('Im Online! as {0.user}'.format(client))
+  message.channel.send(" ``` Hey Potato! I'm a Potato\n Thanks for adding me into your server ```")
 
 @client.event
 async def on_message(message):
