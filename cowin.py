@@ -45,9 +45,3 @@ def get_slots_availability(age, pincode, dose):
     else:
         return available_centers
 
-  # dt = datetime.now() + timedelta(minutes=3)
-
-  # while datetime.now() < dt:
-  #     time.sleep(1)
-result = get_slots_availability(50,600053,1)
-print(result)

@@ -15,5 +15,7 @@ async def on_message(message):
     return
   if message.content.startswith('pt'):
     await message.channel.send('Hello!')
+  if message.content.startswith('pt cowin'):
+    await message.channel.send('cowin')
 
 client.run(os.getenv('TOKEN'))
