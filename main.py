@@ -2,6 +2,7 @@ import os
 import discord 
 from keep_alive import keep_alive
 from cowin import get_slots_availability
+from search import google_search
 from discord.ext import commands
 
 prefix = "pt "
@@ -66,6 +67,28 @@ async def cowin(ctx, age:str, pincode:str, dose:str):
       
   embed = discord.Embed(title=title, description=msg, color=0xFFFFF)
   await ctx.send(embed=embed)
+  
+@bot.command()
+async def google(ctx, search:str):
+  title = "Potato Says.."
+  msg = "\n"+ctx.message.author.mention+"\n"
+  search_result = google_search(search)
+  if search_result == "failed":
+    msg += "\nSearch Failed :("
+  else:
+    title = "Here are the results.."
+    for result in search_result["items"]:
+      search = '\n'
+      search += '\n**'+result["title"]+'**'
+      search += '\n*'+result["link"]+'*'
+      search += '\n```'+result["snippet"]+'```'
+      msg += search
+      
+    
+      
+  embed = discord.Embed(title=title, description=msg, color=0xFFFFF)
+  await ctx.send(embed=embed) 
+
 
 @bot.command()
 async def ping(ctx):
