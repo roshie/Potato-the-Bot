@@ -32,7 +32,8 @@ async def about(ctx):
   msg = "\n*Thanks for adding me into your server* \n My commands\
     \n ◻ pt hello - I would say hello back to you\
     \n ◻ pt ping - Latency of the bot\
-    \n ◻ pt cowin <age> <pincode> <dose> - This feature is building up. Stay tuned!"
+    \n ◻ pt cowin <age> <pincode> <dose>\
+    \n ◻ pt google \"<search-term>\""
   embed = discord.Embed(title= "Hey Potato! I'm Potato", description=msg, color=0xFFFFF)
   await ctx.send(embed=embed)
 
@@ -51,7 +52,7 @@ async def cowin(ctx, age:str, pincode:str, dose:str):
     msg = available_slots[1]
   else:
     title = "Slot Available Centres"
-    msg += "\n**There are "+ str(len(available_slots)) + " Centers available at pincode " + str(available_slots[0]["center_pincode"]) + " For Dosage "+ str(dose) +"**\n" 
+    msg += "\n**There are "+ str(len(available_slots)) + " Center(s) available at pincode " + str(available_slots[0]["center_pincode"]) + " For Dosage "+ str(dose) +"**\n" 
     for centre in available_slots:
       slot = '\n'
       slot += '\n**Center Id**     ' + str(centre["center_id"])
@@ -60,19 +61,24 @@ async def cowin(ctx, age:str, pincode:str, dose:str):
       slot += '\n**Fee**           ' + centre["fee"]
 
       for session in centre["session"]:
-        slot += '\n```DATE      : ' + session["date"]  
+        slot += '\n```css\nDATE      : ' + session["date"]  
         slot += '\n' + 'VACCINE   : ' + session["vaccine"]
         slot += '\n' + 'AVAILABLE : ' + str(session["available"])+ '```'
       msg += slot
       
-  embed = discord.Embed(title=title, description=msg, color=0xFFFFF)
+  embed = discord.Embed(title=title, description=msg, color=0x2AA198)
   await ctx.send(embed=embed)
   
 @bot.command()
 async def google(ctx, search:str):
+  '''
+  pt google <search-term>
+  '''
+  counter = 0
   title = "Potato Says.."
   msg = "\n"+ctx.message.author.mention+"\n"
   search_result = google_search(search)
+  print(search_result)
   if search_result == "failed":
     msg += "\nSearch Failed :("
   else:
@@ -81,12 +87,15 @@ async def google(ctx, search:str):
       search = '\n'
       search += '\n**'+result["title"]+'**'
       search += '\n*'+result["link"]+'*'
-      search += '\n```'+result["snippet"]+'```'
+      search += '\n```'+result["snippet"].replace('\n','')+'```'
       msg += search
+      if counter == 5:
+        break
+      counter +=1
       
     
       
-  embed = discord.Embed(title=title, description=msg, color=0xFFFFF)
+  embed = discord.Embed(title=title, description=msg, color=0x2AA198)
   await ctx.send(embed=embed) 
 
 
@@ -95,7 +104,7 @@ async def ping(ctx):
     # Get the latency of the bot
     latency = bot.latency  # Included in the Discord.py library
     # Send it to the user
-    await ctx.send(ctx.message.author, "> "+str(latency))
+    await ctx.send(latency)
 
 
 keep_alive()
