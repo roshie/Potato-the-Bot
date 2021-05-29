@@ -1,14 +1,13 @@
 
 import requests 
-from datetime import datetime, timedelta
-import time
+from datetime import datetime
 
 def get_slots_availability(age, pincode, dose):
     try: 
         age = int(age)
         pincode = int(pincode)
         dose = int(dose)
-    except Exception as e:
+    except Exception:
         return "wrong-args"
     
     actual = datetime.today()
@@ -21,11 +20,9 @@ def get_slots_availability(age, pincode, dose):
     header = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36'} 
     
     result = requests.get(URL, headers=header)
-    print(result.json())
     if result.ok:
         response = result.json()
         for center in response["centers"]:
-            # sessionCounter = 0
             for session in center["sessions"]:
                 if (session["min_age_limit"] <= age and session["available_capacity_dose"+str(dose)] > 0 ) :
                     try:
