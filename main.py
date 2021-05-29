@@ -11,6 +11,12 @@ activity = discord.Activity(type=discord.ActivityType.watching, name="Cowin")
 
 bot = commands.Bot(command_prefix=prefix, description="Hey Potato! I'm Potato", activity=activity, status=discord.Status.idle)
 
+class ErrorHandler(commands.CommandError):
+   def __init__(self, text):
+       self.text = text
+   
+   def __str__(self): #used to get string of error
+      return self.text
 
 @bot.event
 async def on_ready():
@@ -39,35 +45,38 @@ async def about(ctx):
 
 @bot.command()
 async def cowin(ctx, age:str, pincode:str, dose:str):
-  title = "Potato says: "
-  msg = "\n"+ctx.message.author.mention
-  available_slots = get_slots_availability(age, pincode, dose)
-  if available_slots == "wrong-args":
-    msg += "\nThe Arguments provided were wrong"
-  elif available_slots == "no-response":
-    msg += "\nThere was a problem with Cowin. Please Try again later"
-  elif available_slots == "no-slots":
-    msg += "\nThere are no slots :("
-  elif available_slots[0] == "exception":
-    msg = available_slots[1]
+  if dose is None: #missing argument
+      raise ErrorHandler("A parameter is missing (dose).\n The command is pt cowin <age> <pincode> <dose>")
   else:
-    title = "Slot Available Centres"
-    msg += "\n**There are "+ str(len(available_slots)) + " Center(s) available at pincode " + str(available_slots[0]["center_pincode"]) + " For Dosage "+ str(dose) +"**\n" 
-    for centre in available_slots:
-      slot = '\n'
-      slot += '\n**Center Id**     ' + str(centre["center_id"])
-      slot += '\n**Center Name**   ' + centre["center_name"]
-      slot += '\n**Address**       ' + centre["center_address"]
-      slot += '\n**Fee**           ' + centre["fee"]
+      title = "Potato says: "
+      msg = "\n"+ctx.message.author.mention
+      available_slots = get_slots_availability(age, pincode, dose)
+      if available_slots == "wrong-args":
+        msg += "\nThe Arguments provided were wrong"
+      elif available_slots == "no-response":
+        msg += "\nThere was a problem with Cowin. Please Try again later"
+      elif available_slots == "no-slots":
+        msg += "\nThere are no slots :("
+      elif available_slots[0] == "exception":
+        msg = available_slots[1]
+      else:
+        title = "Slot Available Centres"
+        msg += "\n**There are "+ str(len(available_slots)) + " Center(s) available at pincode " + str(available_slots[0]["center_pincode"]) + " For Dosage "+ str(dose) +"**\n" 
+        for centre in available_slots:
+          slot = '\n'
+          slot += '\n**Center Id**     ' + str(centre["center_id"])
+          slot += '\n**Center Name**   ' + centre["center_name"]
+          slot += '\n**Address**       ' + centre["center_address"]
+          slot += '\n**Fee**           ' + centre["fee"]
 
-      for session in centre["session"]:
-        slot += '\n```css\nDATE      : ' + session["date"]  
-        slot += '\n' + 'VACCINE   : ' + session["vaccine"]
-        slot += '\n' + 'AVAILABLE : ' + str(session["available"])+ '```'
-      msg += slot
-      
-  embed = discord.Embed(title=title, description=msg, color=0x2AA198)
-  await ctx.send(embed=embed)
+          for session in centre["session"]:
+            slot += '\n```css\nDATE      : ' + session["date"]  
+            slot += '\n' + 'VACCINE   : ' + session["vaccine"]
+            slot += '\n' + 'AVAILABLE : ' + str(session["available"])+ '```'
+          msg += slot
+          
+      embed = discord.Embed(title=title, description=msg, color=0x2AA198)
+      await ctx.send(embed=embed)
   
 @bot.command()
 async def google(ctx, search:str):
@@ -106,6 +115,11 @@ async def ping(ctx):
     # Send it to the user
     await ctx.send(latency)
 
+
+async def on_command_error(ctx, error): #error handler
+  if isinstance(error, ErrorHandler):
+      embed = discord.Embed(title="Potato Says..", description=error, color=0xFF0000)
+      await ctx.send(embed=embed) 
 
 keep_alive()
 bot.run(os.getenv('TOKEN'))  # Where 'TOKEN' is your bot token
