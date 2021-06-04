@@ -6,11 +6,11 @@ from search import google_search
 from discord.ext import commands
 import asyncio
 
-prefix = "pt "
+prefix = "pt"
 
 activity = discord.Activity(type=discord.ActivityType.watching, name="Cowin")
 
-bot = commands.Bot(command_prefix=prefix, description="Hey Potato! I'm Potato", activity=activity, status=discord.Status.idle)
+bot = commands.Bot(command_prefix=prefix, description="Hey Potato!", activity=activity, status=discord.Status.idle)
 
 def formatResponse(available_slots, dose):
     msg = "\n**There are "+ str(len(available_slots)) + " Center(s) available at pincode " + str(available_slots[0]["center_pincode"]) + " For Dosage "+ str(dose) +"**\n" 
@@ -63,7 +63,7 @@ async def about(ctx):
 @bot.command()
 async def cowin(ctx, age:str, pincode:str, dose:str):
   if dose is None: #missing argument
-      raise ErrorHandler("A parameter is missing (dose).\n The command is pt cowin <age> <pincode> <dose>")
+      raise ErrorHandler("An argument is missing..")
   else:
       title = "Potato says: "
       msg = "\n"+ctx.message.author.mention
@@ -85,9 +85,7 @@ async def cowin(ctx, age:str, pincode:str, dose:str):
   
 @bot.command()
 async def google(ctx, search:str):
-  '''
-  pt google <search-term>
-  '''
+    
   counter = 0
   title = "Potato Says.."
   msg = "\n"+ctx.message.author.mention+"\n"
@@ -106,8 +104,6 @@ async def google(ctx, search:str):
       if counter == 5:
         break
       counter +=1
-      
-    
       
   embed = discord.Embed(title=title, description=msg, color=0x2AA198)
   await ctx.send(embed=embed) 
@@ -132,7 +128,7 @@ class Notify(commands.Cog):
         self.bot = bot
         self.task = ""
         self.author = ""
-    async def looper(self, author, channel, age, pincode, dose):
+    async def thread(self, author, channel, age, pincode, dose):
         await bot.wait_until_ready()
         channel = bot.get_channel(channel)
         msg = "\n"+author.mention+"\n"
@@ -163,21 +159,21 @@ class Notify(commands.Cog):
         """pt cowin_start <age> <pincode> <dose> \nStarts Loop. Notifies when a slot is available"""
         msg = ''
         if not self.task:
-            self.task = self.bot.loop.create_task(self.looper(ctx.message.author, ctx.message.channel.id, age, pincode, dose))
-            msg = 'The Request loop has started!'
+            self.task = self.bot.loop.create_task(self.thread(ctx.message.author, ctx.message.channel.id, age, pincode, dose))
+            msg = 'The Request thread has started!'
             self.author = ctx.message.author
         else:
-            msg = 'A loop has already initiated by '+self.author.mention+' and it is running\
-            \n Stop the loop by using pt cowin_stop'
+            msg = 'A thread has already initiated by '+self.author.mention+' and it is running\
+            \n Stop the thread by using pt cowin_stop'
         embed = discord.Embed(title="Potato says..", description=msg, color=0x2AA198)
         await ctx.send(embed=embed) 
 
     @commands.command()
     async def cowin_stop(self, ctx):
-        """pt cowin_stop \nStops a loop"""
+        """pt cowin_stop \nStops a thread"""
         self.task.cancel()
         self.task = ""
-        embed = discord.Embed(title="Potato says..", description="The loop is stopped", color=0x2AA198)
+        embed = discord.Embed(title="Potato says..", description="The thread is stopped", color=0x2AA198)
         await ctx.send(embed=embed) 
 
 
